@@ -141,7 +141,7 @@
     }
 
     #start-modal {
-      background: rgba(10, 15, 28, 0.25);
+      background: rgba(0, 0, 0, 0.5); /* 투명도 50%의 검은 배경 */
       justify-content: center;
       gap: 12px;
       padding: 20px 16px;
@@ -320,7 +320,16 @@
       display: block;
       width: 82%;
       box-shadow: 0 4px 0 #4a1923;
-      text-shadow: -1.5px -1.5px 0 #4a1923, 1.5px -1.5px 0 #4a1923, -1.5px 1.5px 0 #4a1923, 1.5px 1.5px 0 #4a1923;
+      /* 8방향 그림자를 줘서 테두리가 끊기지 않게 수정 */
+      text-shadow: 
+        -1.5px -1.5px 0 #4a1923,
+         1.5px -1.5px 0 #4a1923,
+        -1.5px  1.5px 0 #4a1923,
+         1.5px  1.5px 0 #4a1923,
+         0px   -1.5px 0 #4a1923,
+         0px    1.5px 0 #4a1923,
+        -1.5px  0px   0 #4a1923,
+         1.5px  0px   0 #4a1923;
       transition: 0.08s;
       outline: none;
     }
@@ -515,7 +524,6 @@
 
     <!-- 하단 버튼 영역 -->
     <div class="bottom-action-container">
-      <!-- START 버튼: 글자 및 꽃 아래 그림자 제거 완료 -->
       <button class="btn-start" id="start-btn">
         <svg class="btn-start-svg" viewBox="0 0 240 50" xmlns="http://www.w3.org/2000/svg">
           <!-- 좌측 벚꽃 -->
@@ -817,11 +825,15 @@ const ctx = canvas.getContext('2d');
 const container = document.getElementById('game-container');
 
 let width, height;
+
+// 모바일 고해상도 지원을 위한 resize 함수 개선
 function resize() {
   width = container.clientWidth;
   height = container.clientHeight;
-  canvas.width = width;
-  canvas.height = height;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 resize();
 window.addEventListener('resize', resize);
@@ -1103,12 +1115,13 @@ const particles = [];
 const redStars = []; 
 
 function spawnRice() {
-  const rand = Math.random() * 3.5;
+  // 흰색(2) : 핑크(0.5) : 보라(0.8) 비율 적용 
+  const rand = Math.random() * 3.3;
   let riceType;
   
-  if (rand < 1) {
+  if (rand < 0.8) {
     riceType = 'purple';
-  } else if (rand < 1.5) {
+  } else if (rand < 1.3) {
     riceType = 'pink';
   } else {
     riceType = 'white';
